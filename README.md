@@ -62,16 +62,16 @@ Example vars Adding users
 ```
     ---
     users:
-      - username: foo
-        name: Foo Bar
+      - username: vagrant
+        name: vagrant user
         groups: ['admin','systemd-journal']
         uid: 1005
-        home: /local/home/foo
+        home: /local/home/vagrant
         profile: |
           alias ll='ls -ahl'
         ssh_key:
-          - "ssh-rsa AAAAA.... foo@server"
-          - "ssh-rsa AAAAB.... foo2@server"
+          - "ssh-rsa AAAAA.... powershell@localhost"
+          - "ssh-rsa AAAAB.... wsl@localhost"
     groups_to_create:
       - name: developers
         gid: 20000
@@ -84,7 +84,7 @@ You can optionally choose to remove the user's home directory and mail spool wit
 the `remove` parameter, and force removal of files with the `force` parameter.
 
     users_deleted:
-      - username: bar
+      - username: vagrant
         uid: 1003
         remove: yes
         force: yes
@@ -98,16 +98,16 @@ Including an example of how to use your role (for instance, with variables passe
     - hosts: all
       vars:        
         users:
-          - username: foo
-            name: Foo Bar
+          - username: vagrant 
+            name: vagrant user
             groups: ['vagrant','systemd-journal']
             uid: 1005
-            home: /local/home/foo
+            home: /local/home/vagrant
             profile: |
               alias ll='ls -ahl'
             ssh_key:
-              - "ssh-rsa AAAAA.... foo@server"
-              - "ssh-rsa AAAAB.... foo2@server"
+              - "ssh-rsa AAAAA.... powershell@server"
+              - "ssh-rsa AAAAB.... wsl@server"
         
         groups_to_create:
           - name: developers
