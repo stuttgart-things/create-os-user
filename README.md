@@ -77,6 +77,14 @@ Example vars Adding users
         gid: 20000
 ```
 
+Example generating hashed password
+----------------------------------
+
+```
+ansible all -i localhost, -m debug -a "msg={{ 'password' | password_hash('sha512', 'mysecretsalt') }}
+```
+
+
 Example vars Removing users
 ---------------------------
 
