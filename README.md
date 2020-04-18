@@ -61,20 +61,22 @@ Example vars Adding users
 -------------------------
 ```
     ---
-    users:
-      - username: vagrant
-        name: vagrant user
-        groups: ['admin','systemd-journal']
-        uid: 1005
-        home: /local/home/vagrant
-        profile: |
-          alias ll='ls -ahl'
-        ssh_key:
-          - "ssh-rsa AAAAA.... powershell@localhost"
-          - "ssh-rsa AAAAB.... wsl@localhost"
-    groups_to_create:
-      - name: developers
-        gid: 20000
+    vars:
+      users:
+        - username: rke 
+          name: rke user
+          groups: ['wheel','docker']
+          uid: 1005
+          home: /home/rke
+          profile: |
+            alias ll='ls -ahl'
+          ssh_key:
+            - "{{ lookup('file', '/root/.ssh/rancher_rsa.pub') }}"
+          enable_ssh_tcp_forwarding: True
+        
+      groups_to_create:
+        - name: developers
+          gid: 20000
 ```
 
 Example generating hashed password
@@ -103,27 +105,32 @@ Example Playbook
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    - hosts: all
-      vars:        
+```
+- hosts: all
+  remote_user: root
+  gather_facts: true
+  roles:
+    - role: create-os-user 
+      vars:
         users:
-          - username: vagrant 
-            name: vagrant user
-            groups: ['vagrant','systemd-journal']
+          - username: rke 
+            name: rke user
+            groups: ['wheel','docker']
             uid: 1005
-            home: /local/home/vagrant
+            home: /home/rke
             profile: |
               alias ll='ls -ahl'
             ssh_key:
-              - "ssh-rsa AAAAA.... powershell@server"
-              - "ssh-rsa AAAAB.... wsl@server"
+              - "{{ lookup('file', '/root/.ssh/rancher_rsa.pub') }}"
+            enable_ssh_tcp_forwarding: True
         
         groups_to_create:
           - name: developers
-          gid: 20000
+            gid: 20000
 
       roles:
          - role: create-os-user
-
+```
 License
 -------
 
