@@ -50,7 +50,7 @@ The following attributes are required for each user:
   should be included directly and should have no newlines.
 * `generate_ssh_key` - Whether to generate a SSH key for the user (optional, defaults to no).
 * `enable_ssh_tcp_forwarding` - Whether to set SSH-TCP Forwording or not
-* 
+ 
 In addition, the following items are optional for each user:
 
 * `shell` - The user's shell. This defaults to /bin/bash. The default is
