@@ -9,6 +9,13 @@
     validate: '/usr/sbin/visudo -cf %s'
   tags: ["users", "groups", "configuration"]
 
+- name: sudo without password for wheel group
+  copy:
+    content: '%wheel ALL=(ALL:ALL) NOPASSWD:ALL'
+    dest: /etc/sudoers.d/wheel_nopasswd
+    mode: 0440
+  when: ansible_os_family == 'RedHat'
+
 - name: Creating groups
   group: name="{{ item.name }}" gid="{{ item.gid | default(omit) }}"
   with_items: "{{ groups_to_create }}"
@@ -76,3 +83,12 @@
   with_items: "{{ users_deleted }}"
   when: users_create_per_user_group
   tags: ["users", "configuration"]
+  
+- name: Enable SSH TCP Forwarding
+  lineinfile:
+    path: "{{ item.home | default('/home/' + item.username) }}/.ssh/config"
+    line:  "AllowTcpForwarding yes"
+    regexp: '^#AllowTcpForwarding yes$'
+    create: yes
+  when: item.enable_ssh_tcp_forwarding is defined and item.enable_ssh_tcp_forwarding|bool == True
+  with_items: "{{ users }}"  
