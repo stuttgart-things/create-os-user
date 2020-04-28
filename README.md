@@ -101,7 +101,7 @@ the `remove` parameter, and force removal of files with the `force` parameter.
         force: yes
 
 
-Example Playbook
+Example Playbook #1
 ----------------
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
@@ -132,6 +132,29 @@ Including an example of how to use your role (for instance, with variables passe
       roles:
          - role: create-os-user
 ```
+
+
+Example Playbook #2
+----------------
+```
+---
+- hosts: all
+  become: true
+  roles:
+    - role: create-os-user
+      vars:
+        users:
+          - username: awx
+            name: awx user
+            groups: ['wheel','awx']
+            uid: 1005
+            home: /home/awx
+            enable_ssh_tcp_forwarding: true
+        groups_to_create:
+          - name: awx
+            gid: 20000
+```
+
 License
 -------
 
