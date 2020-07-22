@@ -9,6 +9,15 @@
     validate: '/usr/sbin/visudo -cf %s'
   tags: ["users", "groups", "configuration"]
 
+- name: Allow sudo group sudo without password
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo   ALL='
+    line: '%sudo   ALL=(ALL:ALL) NOPASSWD: ALL'
+    validate: '/usr/sbin/visudo -cf %s'
+  tags: ["users", "groups", "configuration"]
+
 - name: sudo without password for wheel group
   copy:
     content: '%wheel ALL=(ALL:ALL) NOPASSWD:ALL'
