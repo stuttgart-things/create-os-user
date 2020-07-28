@@ -1,31 +1,4 @@
 ---
-# tasks file for create-os-user
-- name: Allow admin group sudo without password
-  lineinfile:
-    path: /etc/sudoers
-    state: present
-    regexp: '^%admin ALL='
-    line: '%admin ALL=(ALL) NOPASSWD: ALL'
-    validate: '/usr/sbin/visudo -cf %s'
-  tags: ["users", "groups", "configuration"]
-
-- name: Allow sudo group sudo without password
-  lineinfile:
-    path: /etc/sudoers
-    state: present
-    regexp: '^%sudo   ALL='
-    line: '%sudo   ALL=(ALL:ALL) NOPASSWD: ALL'
-    validate: '/usr/sbin/visudo -cf %s'
-  tags: ["users", "groups", "configuration"]
-  when: ansible_os_family == 'Debian'
-
-- name: sudo without password for wheel group
-  copy:
-    content: '%wheel ALL=(ALL:ALL) NOPASSWD:ALL'
-    dest: /etc/sudoers.d/wheel_nopasswd
-    mode: 0440
-  when: ansible_os_family == 'RedHat'
-
 - name: Creating groups
   group: name="{{ item.name }}" gid="{{ item.gid | default(omit) }}"
   with_items: "{{ groups_to_create }}"
@@ -37,6 +10,42 @@
   with_items: "{{ users }}"
   when: "'group' not in item and users_create_per_user_group"
   tags: ["users", "configuration"]
+
+- name: Allow admin group sudo without password
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%admin ALL='
+    line: '%admin ALL=(ALL) NOPASSWD: ALL'
+    validate: '/usr/sbin/visudo -cf %s'
+  tags: ["users", "groups", "configuration"]
+  when: ansible_os_family == 'Debian'
+
+- name: Allow sudo group sudo without password
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo   ALL='
+    line: '%sudo   ALL=(ALL:ALL) NOPASSWD: ALL'
+    validate: '/usr/sbin/visudo -cf %s'
+  tags: ["users", "groups", "configuration"]
+  when: ansible_os_family == 'Debian'
+
+- name: Allow sudo group sudo without password
+  lineinfile:
+    path: /etc/sudoers
+    line: '{{ item.username }} ALL=NOPASSWD: ALL'
+    create: yes
+    validate: '/usr/sbin/visudo -cf %s'
+  with_items: "{{ users }}"
+  when: ansible_os_family == 'Debian' and '"sudo" in users.groups'
+
+- name: sudo without password for wheel group
+  copy:
+    content: '%wheel ALL=(ALL:ALL) NOPASSWD:ALL'
+    dest: /etc/sudoers.d/wheel_nopasswd
+    mode: 0440
+  when: ansible_os_family == 'RedHat'
 
 - name: User creation
   user:
