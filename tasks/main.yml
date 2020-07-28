@@ -31,7 +31,7 @@
   tags: ["users", "groups", "configuration"]
   when: ansible_os_family == 'Debian'
 
-- name: Allow sudo group sudo without password
+- name: Allow user sudo without password
   lineinfile:
     path: /etc/sudoers
     line: '{{ item.username }} ALL=NOPASSWD: ALL'
