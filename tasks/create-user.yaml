@@ -1,6 +1,6 @@
 ---
 - name: User creation
-  user:
+  ansible.builtin.user:
     name: "{{ item.username }}"
     group: "{{ item.group | default(item.username if users_create_per_user_group else users_group) }}"
     # empty string removes user from all secondary groups
@@ -19,7 +19,7 @@
   tags: ["users", "configuration"]
 
 - name: SSH keys
-  authorized_key:
+  ansible.posix.authorized_key:
     user: "{{ item.0.username }}"
     key: "{{ item.1 }}"
     path: "{{ item.0.home | default('/home/' + item.0.username)  }}/.ssh/authorized_keys"
@@ -30,7 +30,7 @@
   tags: ["users", "configuration"]
 
 - name: Setup user profiles
-  blockinfile:
+  ansible.builtin.blockinfile:
     block: "{{ item.profile }}"
     dest: "{{ item.home | default('/home/' + item.username) }}/.profile"
     owner: "{{ item.username }}"
@@ -41,7 +41,7 @@
   with_items: "{{ users }}"
 
 - name: Deleted user removal
-  user:
+  ansible.builtin.user:
     name: "{{ item.username }}"
     state: absent
     remove: "{{ item.remove | default(omit) }}"
@@ -50,13 +50,15 @@
   tags: ["users", "configuration"]
 
 - name: Deleted per-user group removal
-  group: name="{{ item.username }}" state=absent
+  ansible.builtin.group: 
+    name: "{{ item.username }}"
+    state: absent
   with_items: "{{ users_deleted }}"
   when: users_create_per_user_group
   tags: ["users", "configuration"]
   
 - name: Enable SSH TCP Forwarding
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ item.home | default('/home/' + item.username) }}/.ssh/config"
     line:  "AllowTcpForwarding yes"
     regexp: '^#AllowTcpForwarding yes$'
