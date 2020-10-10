@@ -51,9 +51,6 @@ Including an example of how to use your role (for instance, with variables passe
             gid: 11000
           - name: developers
             gid: 21000
-
-      roles:
-         - role: create-os-user
 ```
 
 
