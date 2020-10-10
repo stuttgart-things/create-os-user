@@ -28,27 +28,29 @@ Example Playbook #1
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
 ```
-- hosts: all
-  remote_user: root
+- hosts: "{{ target_host }}"
   gather_facts: true
+  become: true
   roles:
-    - role: create-os-user 
+    - role: create-os-user
       vars:
         users:
-          - username: rke 
+          - username: rke
             name: rke user
-            groups: ['wheel','docker']
+            groups: ['{{ admin_group }}','k8s-admins']
             uid: 1005
             home: /home/rke
             profile: |
               alias ll='ls -ahl'
             ssh_key:
-              - "{{ lookup('file', '/root/.ssh/rancher_rsa.pub') }}"
+              - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
             enable_ssh_tcp_forwarding: True
-        
+
         groups_to_create:
+          - name: k8s-admins
+            gid: 11000
           - name: developers
-            gid: 20000
+            gid: 21000
 
       roles:
          - role: create-os-user
@@ -146,28 +148,6 @@ the `remove` parameter, and force removal of files with the `force` parameter.
         uid: 1003
         remove: yes
         force: yes
-
-
-Example Playbook #2
-----------------
-```
----
-- hosts: all
-  become: true
-  roles:
-    - role: create-os-user
-      vars:
-        users:
-          - username: awx
-            name: awx user
-            groups: ['wheel','awx']
-            uid: 1005
-            home: /home/awx
-            enable_ssh_tcp_forwarding: true
-        groups_to_create:
-          - name: awx
-            gid: 20000
-```
 
 Role history
 ----------------
