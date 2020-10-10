@@ -15,7 +15,6 @@ roles:
   scm: git
 collections:
 - name: ansible.posix
-
 EOF
 
 ansible-galaxy install -r /tmp/requirements.yaml --force
@@ -185,5 +184,4 @@ BSD
 Author Information
 ------------------
 
-Patrick Hermann, 04/2020
-patrick.hermann@sva.de
+Patrick Hermann (patrick.hermann@sva.de); 04/2020
