@@ -13,7 +13,7 @@ users_create_homedirs: true
 users: []
 users_deleted: []
 
-admin_group: "{% if ansible_os_family == "RedHat" %}wheel{% elif ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' %}sudo{% else %}admin{% endif %}" 
+admin_group: "{% if ansible_os_family == 'RedHat' %}wheel{% elif ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' %}sudo{% else %}admin{% endif %}" 
 update_packages: false
 
 groups_to_create: []
