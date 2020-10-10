@@ -6,7 +6,55 @@ Role to manage users on a system/os.
 Requirements
 ------------
 
-none.
+installs role and all of it's dependencies w/:
+
+```
+cat <<EOF > /tmp/requirements.yaml
+roles:
+- src: git@codehub.sva.de:Lab/stuttgart-things/supporting-roles/create-os-user.git
+  scm: git
+collections:
+- name: ansible.posix
+
+EOF
+
+ansible-galaxy install -r /tmp/requirements.yaml --force
+ansible-galaxy collection install -r /tmp/requirements.yaml --force
+rm -rf /tmp/requirements.yaml
+```
+
+Example Playbook #1
+----------------
+
+Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+
+```
+- hosts: all
+  remote_user: root
+  gather_facts: true
+  roles:
+    - role: create-os-user 
+      vars:
+        users:
+          - username: rke 
+            name: rke user
+            groups: ['wheel','docker']
+            uid: 1005
+            home: /home/rke
+            profile: |
+              alias ll='ls -ahl'
+            ssh_key:
+              - "{{ lookup('file', '/root/.ssh/rancher_rsa.pub') }}"
+            enable_ssh_tcp_forwarding: True
+        
+        groups_to_create:
+          - name: developers
+            gid: 20000
+
+      roles:
+         - role: create-os-user
+```
+
 
 Defaults
 --------------
@@ -99,39 +147,6 @@ the `remove` parameter, and force removal of files with the `force` parameter.
         uid: 1003
         remove: yes
         force: yes
-
-
-Example Playbook #1
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-```
-- hosts: all
-  remote_user: root
-  gather_facts: true
-  roles:
-    - role: create-os-user 
-      vars:
-        users:
-          - username: rke 
-            name: rke user
-            groups: ['wheel','docker']
-            uid: 1005
-            home: /home/rke
-            profile: |
-              alias ll='ls -ahl'
-            ssh_key:
-              - "{{ lookup('file', '/root/.ssh/rancher_rsa.pub') }}"
-            enable_ssh_tcp_forwarding: True
-        
-        groups_to_create:
-          - name: developers
-            gid: 20000
-
-      roles:
-         - role: create-os-user
-```
 
 
 Example Playbook #2
