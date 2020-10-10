@@ -1,5 +1,5 @@
-create-os-user
-=========
+stuttgart-things/create-os-user
+===============================
 
 Role to manage users on a system/os.
 
@@ -154,6 +154,13 @@ Example Playbook #2
           - name: awx
             gid: 20000
 ```
+
+Role history
+----------------
+| date  | who | changelog |
+|---|---|---|
+|2020-04-20   | Patrick Hermann | intial commit for creation of users/groups w/ ansible
+|2020-10-10   | Patrick Hermann | Updated for using of ansible collections, fixed role structure, default 'admin-user group' for debian/redhat
 
 License
 -------
