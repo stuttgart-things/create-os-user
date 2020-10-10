@@ -12,6 +12,7 @@ installs role and all of it's dependencies w/:
 cat <<EOF > /tmp/requirements.yaml
 roles:
 - src: git@codehub.sva.de:Lab/stuttgart-things/supporting-roles/create-os-user.git
+  version: stable
   scm: git
 collections:
 - name: ansible.posix
