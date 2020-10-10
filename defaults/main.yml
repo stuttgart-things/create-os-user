@@ -1,24 +1,24 @@
 ---
-# defaults file for create-os-user
-    # Create a group for every user and make that their primary group
-    users_create_per_user_group: true
-    # If we're not creating a per-user group, then this is the group all users
-    # belong to
-    users_group: users
-    # The default shell for a user if none is specified
-    users_default_shell: /bin/bash
-    # Create home dirs for new users? Set this to false if you manage home
-    # directories in some other way.
-    users_create_homedirs: true
-    
-    # Lists of users to create and delete
-    users: []
-    users_deleted: []
-    
-    # List of groups to create
-    # Example:
-    #   groups_to_create:
-    #     - name: developers
-    #       gid: 20000
-    groups_to_create: []
-    
+# Create a group for every user and make that their primary group
+users_create_per_user_group: true
+# If we're not creating a per-user group, then this is the group all users belong to
+users_group: users
+# The default shell for a user if none is specified
+users_default_shell: /bin/bash
+# Create home dirs for new users? Set this to false if you manage home
+# directories in some other way.
+users_create_homedirs: true
+
+# Lists of users to create and delete
+users: []
+users_deleted: []
+
+admin_group: "{% if ansible_os_family == "RedHat" %}wheel{% elif ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' %}sudo{% else %}admin{% endif %}" 
+update_packages: false
+
+groups_to_create: []
+# List of groups to create
+# Example:
+#   groups_to_create:
+#     - name: developers
+#       gid: 20000
