@@ -1,7 +1,7 @@
 stuttgart-things/create-os-user
 ===============================
 
-Role to manage users on a system/os.
+Role to manage users on a linux-os.
 
 Requirements
 ------------
