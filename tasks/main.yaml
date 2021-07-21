@@ -1,9 +1,9 @@
 ---
 - name: Create group(s)
-  include_tasks: create-groups.yaml
+  ansible.builtin.include_tasks: create-groups.yaml
 
 - name: Create admin group(s)
-  include_tasks: create-admin-group.yaml
+  ansible.builtin.include_tasks: create-admin-group.yaml
 
 - name: Create user(s)
-  include_tasks: create-users.yaml
+  ansible.builtin.include_tasks: create-users.yaml
