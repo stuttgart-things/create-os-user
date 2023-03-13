@@ -5,14 +5,5 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Include workflow
-      run: |
-        git submodule add https://github.com/stuttgart-things/stuttgart-things.git
-    - name: LS root repo actions
-      working-directory: stuttgart-things/actions
-      run: |
-        ls -la
     - name: Run ansible-lint action
       uses: stuttgart-things/stuttgart-things/.github/workflows/ansible-lint.yml@main
