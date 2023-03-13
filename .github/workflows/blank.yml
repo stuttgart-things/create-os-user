@@ -15,4 +15,4 @@ jobs:
       run: |
         ls -la
     - name: Run ansible-lint action
-      uses: stuttgart-things/actions/ansible-lint-action.yml@main
+      uses: ./stuttgart-things/actions/ansible-lint-action.yml
