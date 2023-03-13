@@ -13,5 +13,5 @@ jobs:
     - name: Ls dir
       run: |
         ls -la
-    - name: Run workflow
-      uses: stuttgart-things/stuttgart-things/actions/ansible-lint-action.yml@main
+#     - name: Run workflow
+#       uses: stuttgart-things/stuttgart-things/actions/ansible-lint-action.yml@main
