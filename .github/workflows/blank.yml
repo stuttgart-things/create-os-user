@@ -1,0 +1,16 @@
+name: linting
+on: [push]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Include workflow
+      run: |
+        git submodule add https://github.com/stuttgart-things/stuttgart-things.git
+        cp actions/ansible-lint-action.yml .
+    - name: Run workflow
+      run: |
+        # exec workflow
