@@ -10,9 +10,9 @@ jobs:
     - name: Include workflow
       run: |
         git submodule add https://github.com/stuttgart-things/stuttgart-things.git
-    - name: Ls dir
+    - name: LS root repo
       working-directory: stuttgart-things
       run: |
         ls -la
-#     - name: Run workflow
-#       uses: stuttgart-things/stuttgart-things/actions/ansible-lint-action.yml@main
+    - name: Run ansible-lint action
+      uses: stuttgart-things/actions/ansible-lint-action.yml@main
