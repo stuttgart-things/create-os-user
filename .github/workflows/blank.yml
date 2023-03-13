@@ -11,4 +11,4 @@ jobs:
       run: |
         git submodule add https://github.com/stuttgart-things/stuttgart-things.git
     - name: Run workflow
-      uses: stuttgart-things/stuttgart-things@main
+      uses: stuttgart-things/stuttgart-things/actions/path/to/your/ansible-lint-action.yml@main
