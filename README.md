@@ -11,7 +11,7 @@ installs role and all of it's dependencies w/:
 ```
 cat <<EOF > /tmp/requirements.yaml
 roles:
-- src: git@codehub.sva.de:Lab/stuttgart-things/supporting-roles/create-os-user.git
+- src: https://github.com/stuttgart-things/create-os-user.git
   scm: git
 collections:
 - name: ansible.posix
@@ -161,4 +161,4 @@ BSD
 Author Information
 ------------------
 
-Patrick Hermann (patrick.hermann@sva.de); 04/2020
+Patrick Hermann (patrick.hermann@sva.de); 04/2020; Stuttgart-Things
