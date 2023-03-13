@@ -10,6 +10,7 @@ jobs:
     - name: Include workflow
       run: |
         git submodule add https://github.com/stuttgart-things/stuttgart-things.git
+        ls -la
         cp actions/ansible-lint-action.yml .
     - name: Run workflow
       run: |
