@@ -9,7 +9,7 @@
     password: "{{ item.password if item.password is defined else '!' }}"
     comment: "{{ item.name if item.name is defined else '' }}"
     uid: "{{ item.uid | default(omit) }}"
-    home: "{{ item.home | default('/home/' + item.username)  }}"
+    home: "{{ item.home | default('/home/' + item.username) }}"
     createhome: "{{ 'yes' if users_create_homedirs else 'no' }}"
     generate_ssh_key: "{{ item.generate_ssh_key | default(omit)  }}"
     update_password: "{{ item.update_password | default(omit) }}"
@@ -25,7 +25,7 @@
   with_subelements:
     - "{{ users }}"
     - ssh_key
-    - skip_missing: yes
+    - skip_missing: true
   tags: ["users", "configuration"]
 
 - name: Setup user profiles
@@ -49,18 +49,18 @@
   tags: ["users", "configuration"]
 
 - name: Deleted per-user group removal
-  ansible.builtin.group: 
+  ansible.builtin.group:
     name: "{{ item.username }}"
     state: absent
   with_items: "{{ users_deleted }}"
   when: users_create_per_user_group
   tags: ["users", "configuration"]
-  
+
 - name: Enable SSH TCP Forwarding
   ansible.builtin.lineinfile:
     path: "{{ item.home | default('/home/' + item.username) }}/.ssh/config"
     line:  "AllowTcpForwarding yes"
     regexp: '^#AllowTcpForwarding yes$'
-    create: yes
+    create: true
   when: item.enable_ssh_tcp_forwarding is defined and item.enable_ssh_tcp_forwarding|bool == True
-  with_items: "{{ users }}"  
+  with_items: "{{ users }}"

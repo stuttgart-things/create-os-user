@@ -1,13 +1,13 @@
 ---
 - name: Creating groups
-  ansible.builtin.group: 
+  ansible.builtin.group:
     name: "{{ item.name }}"
     gid: "{{ item.gid | default(omit) }}"
   with_items: "{{ groups_to_create }}"
   tags: ["users", "groups", "configuration"]
 
 - name: Per-user group creation
-  ansible.builtin.group: 
+  ansible.builtin.group:
     name: "{{ item.username }}"
     gid: "{{ item.gid | default(item.uid) | default(omit) }}"
   with_items: "{{ users }}"
