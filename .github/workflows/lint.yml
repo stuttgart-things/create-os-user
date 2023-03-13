@@ -6,4 +6,4 @@ jobs:
     runs-on: self-hosted
     steps:
     - name: Run ansible-lint action
-      uses: stuttgart-things/stuttgart-things/.github/workflows/ansible-lint.yml@main
+      uses: stuttgart-things/stuttgart-things/.github/workflows/ansible-lint.yml
