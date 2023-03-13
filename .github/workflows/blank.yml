@@ -11,6 +11,7 @@ jobs:
       run: |
         git submodule add https://github.com/stuttgart-things/stuttgart-things.git
     - name: Ls dir
+      working-directory: stuttgart-things
       run: |
         ls -la
 #     - name: Run workflow
