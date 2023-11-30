@@ -4,7 +4,6 @@
     name: "{{ item.name }}"
     gid: "{{ item.gid | default(omit) }}"
   with_items: "{{ groups_to_create }}"
-  when: additional_groups is defined
   tags: ["users", "groups", "configuration"]
 
 - name: Per-user group creation
