@@ -130,7 +130,7 @@ Example generating hashed password
 ----------------------------------
 
 ```
-ansible all -i localhost, -m debug -a "msg={{ 'password' | password_hash('sha512', 'mysecretsalt') }}
+ansible all -i localhost, -m debug -a "msg={{ 'password' | password_hash('sha512', 'mysecretsalt') }}"
 ```
 
 
