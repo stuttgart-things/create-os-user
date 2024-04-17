@@ -60,7 +60,7 @@
 - name: Enable SSH TCP Forwarding
   ansible.builtin.lineinfile:
     path: "{{ item.home | default('/home/' + item.username) }}/.ssh/config"
-    line:  "AllowTcpForwarding yes"
+    line: "AllowTcpForwarding yes"
     regexp: '^#AllowTcpForwarding yes$'
     create: true
   when: item.enable_ssh_tcp_forwarding is defined and item.enable_ssh_tcp_forwarding|bool == True
