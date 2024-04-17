@@ -1,3 +1,4 @@
+---
 roles:
 - src: https://github.com/stuttgart-things/create-os-user.git
   scm: git

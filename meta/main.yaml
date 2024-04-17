@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: Patrick Hermann
   description: Role to manage users on a system/os.
