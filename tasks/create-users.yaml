@@ -1,22 +1,57 @@
 ---
+- name: Password prompt
+  ansible.builtin.pause:
+    prompt: "Please set password for user: {{ item.username }}"
+  with_items: "{{ users }}"
+  register: password_prompt
+  tags: ["users", "configuration"]
+
+- name: set fact for passwords
+  ansible.builtin.set_fact:
+    passwd: "{{ item.user_input }}"
+  loop: "{{ password_prompt.results }}"
+  register: users_with_passwords
+  tags: ["users", "configuration"]
+
 - name: User creation
   ansible.builtin.user:
-    name: "{{ item.username }}"
-    group: "{{ item.group | default(item.username if users_create_per_user_group else users_group) }}"
-    groups: "{{ item.groups | join(',') if 'groups' in item else '' }}"
-    append: "{{ item.append | default(omit) }}"
-    shell: "{{ item.shell if item.shell is defined else users_default_shell }}"
-    password: "{{ item.password if item.password is defined else '!' }}"
+    name: "{{ item.item.item.username }}"
+    group: "{{ item.item.item.group | default(item.item.item.username if users_create_per_user_group else users_group) }}"
+    groups: "{{ item.item.item.groups | join(',') if 'groups' in item.item.item else '' }}"
+    append: "{{ item.item.item.append | default(omit) }}"
+    shell: "{{ item.item.item.shell if item.item.item.shell is defined else users_default_shell }}"
+    #password: "{{ item.password if item.password is defined else '!' }}"
+    password: "{{ item.ansible_facts.passwd | password_hash('sha512') }}" #if item.item.item.password is not defined else item.item.item.password }}"
     #password: "{{ item.password | password_hash('sha512') if item.password is defined else '!' }}"
-    comment: "{{ item.name if item.name is defined else '' }}"
-    uid: "{{ item.uid | default(omit) }}"
-    home: "{{ item.home | default('/home/' + item.username) }}"
+    comment: "{{ item.item.item.name if item.item.item.name is defined else '' }}"
+    uid: "{{ item.item.item.uid | default(omit) }}"
+    home: "{{ item.item.item.home | default('/home/' + item.item.item.username) }}"
     createhome: "{{ 'yes' if users_create_homedirs else 'no' }}"
-    generate_ssh_key: "{{ item.generate_ssh_key | default(omit) }}"
-    update_password: "{{ item.update_password | default(omit) }}"
-    system: "{{ item.is_system_user | default(omit) | bool or omit }}"
-  with_items: "{{ users }}"
+    generate_ssh_key: "{{ item.item.item.generate_ssh_key | default(omit) }}"
+    update_password: "{{ item.item.item.update_password | default(omit) }}"
+    system: "{{ item.item.item.is_system_user | default(omit) | bool or omit }}"
+  loop: "{{ users_with_passwords.results }}"
   tags: ["users", "configuration"]
+
+#############################################
+#- name: User creation
+#  ansible.builtin.user:
+#    name: "{{ item.username }}"
+#    group: "{{ item.group | default(item.username if users_create_per_user_group else users_group) }}"
+#    groups: "{{ item.groups | join(',') if 'groups' in item else '' }}"
+#    append: "{{ item.append | default(omit) }}"
+#    shell: "{{ item.shell if item.shell is defined else users_default_shell }}"
+#    password: "{{ item.password if item.password is defined else '!' }}"   
+#    #password: "{{ item.password | password_hash('sha512') if item.password is defined else '!' }}"
+#    comment: "{{ item.name if item.name is defined else '' }}"
+#    uid: "{{ item.uid | default(omit) }}"
+#    home: "{{ item.home | default('/home/' + item.username) }}"
+#    createhome: "{{ 'yes' if users_create_homedirs else 'no' }}"
+#    generate_ssh_key: "{{ item.generate_ssh_key | default(omit)  }}"
+#    update_password: "{{ item.update_password | default(omit) }}"
+#    system: "{{ item.is_system_user | default(omit) | bool or omit }}"
+#  with_items: "{{ users }}"
+#  tags: ["users", "configuration"]
 
 - name: SSH keys
   ansible.posix.authorized_key:
@@ -57,11 +92,19 @@
   when: users_create_per_user_group
   tags: ["users", "configuration"]
 
+- name: Delete group removal
+  ansible.builtin.group:
+    name: "{{ item.name }}"
+    state: absent
+    force: "{{ item.force | default(omit) }}"
+  with_items: "{{ groups_deleted }}"
+  tags: ["groups", "configuration"]
+
 - name: Enable SSH TCP Forwarding
   ansible.builtin.lineinfile:
     path: "{{ item.home | default('/home/' + item.username) }}/.ssh/config"
     line: "AllowTcpForwarding yes"
     regexp: '^#AllowTcpForwarding yes$'
     create: true
-  when: item.enable_ssh_tcp_forwarding is defined and item.enable_ssh_tcp_forwarding|bool == True
+  when: item.enable_ssh_tcp_forwarding is defined and item.enable_ssh_tcp_forwarding
   with_items: "{{ users }}"
