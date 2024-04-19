@@ -2,23 +2,8 @@
 - hosts: all # "{{ target_host }}"
   gather_facts: true
   become: true
+  vars_files:
+    - binaries.yaml
+
   roles:
     - role: create-os-user
-      vars:
-        users:
-          - username: rke
-            name: rke user
-            groups: ['{{ admin_group }}','k8s-admins']
-            uid: 1005
-            home: /home/rke
-            profile: |
-              alias ll='ls -ahl'
-            ssh_key:
-              - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-            enable_ssh_tcp_forwarding: True
-
-        groups_to_create:
-          - name: k8s-admins
-            gid: 11000
-          - name: developers
-            gid: 21000
