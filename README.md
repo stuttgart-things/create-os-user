@@ -261,4 +261,5 @@ Author Information
 ------------------
 
 Andre Ebert (andre.ebert@sva.de); 04.2024; Stuttgart-Things
+
 Patrick Hermann (patrick.hermann@sva.de); 04/2020; Stuttgart-Things
