@@ -56,10 +56,9 @@ groups_to_create:
 #    home: /home/test2/
 #    remove: true
 #    force: true
-#
+
 #groups_deleted:
 #  - name: k8s-admins
 #    gid: 11000
 #  - name: developers
 #    gid: 21000
-#
