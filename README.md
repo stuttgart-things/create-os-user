@@ -1,14 +1,13 @@
 stuttgart-things/create-os-user
 ===============================
 
-manage users on linux systems.
+manage users and groups on linux systems.
 
-Requirements
-------------
+<details><summary>ROLE INSTALLATION</summary>
 
 installs role and all of it's dependencies w/:
 
-```
+```bash
 cat <<EOF > /tmp/requirements.yaml
 roles:
 - src: https://github.com/stuttgart-things/create-os-user.git
@@ -21,41 +20,12 @@ ansible-galaxy install -r /tmp/requirements.yaml --force
 ansible-galaxy collection install -r /tmp/requirements.yaml --force
 rm -rf /tmp/requirements.yaml
 ```
+</details>
 
-Example Playbook #1
-----------------
+<details><summary>ROLE VARIABLES</summary>
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-```
-- hosts: "{{ target_host }}"
-  gather_facts: true
-  become: true
-  roles:
-    - role: create-os-user
-      vars:
-        users:
-          - username: rke
-            name: rke user
-            groups: ['{{ admin_group }}','k8s-admins']
-            uid: 1005
-            home: /home/rke
-            profile: |
-              alias ll='ls -ahl'
-            ssh_key:
-              - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-            enable_ssh_tcp_forwarding: True
-
-        groups_to_create:
-          - name: k8s-admins
-            gid: 11000
-          - name: developers
-            gid: 21000
-```
-
-
-Defaults
---------------
+DEFAULTS
+------------
 
 * `users_create_per_user_group` (default: true) - when creating users, also
   create a group with the same username and make that the user's primary
@@ -67,7 +37,7 @@ Defaults
 * `users_create_homedirs` (default: true) - create home directories for new
   users. Set this to false if you manage home directories separately.
 
-user vars
+### USER VARIABLES
 ------------
 
 Add a users variable containing the list of users to add. A good place to put
@@ -104,54 +74,183 @@ In addition, the following items are optional for each user:
   users the same shell, but it is different than /bin/bash.
 * `is_system_user` -  Set to `True` to create system user.
 
-Example vars Adding users
--------------------------
-```
-    ---
-    vars:
-      users:
-        - username: rke 
-          name: rke user
-          groups: ['wheel','docker']
-          uid: 1005
-          home: /home/rke
-          profile: |
-            alias ll='ls -ahl'
-          ssh_key:
-            - "{{ lookup('file', '/root/.ssh/rancher_rsa.pub') }}"
-          enable_ssh_tcp_forwarding: True
-        
-      groups_to_create:
-        - name: developers
-          gid: 20000
+</details>
+
+<details><summary>EXAMPLE INVENTORY</summary>
+
+```bash
+cat <<EOF > inventory
+[appserver]
+1.2.3.4 ansible_user=sthings
+EOF
 ```
 
-Example generating hashed password
-----------------------------------
+</details>
 
+<details><summary>EXAMPLE PLAYBOOK - BINARIES INLINE</summary>
+----------------
+
+Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+
+```yaml
+cat <<EOF > create-os-user.yaml
+- hosts: "{{ target_host }}"
+  gather_facts: true
+  become: true
+  roles:
+    - role: create-os-user
+      vars:
+        users:
+          - username: rke
+            name: rke user
+            groups: ['{{ admin_group }}','k8s-admins']
+            uid: 1005
+            home: /home/rke
+            profile: |
+              alias ll='ls -ahl'
+            ssh_key:
+              - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+            enable_ssh_tcp_forwarding: True
+
+        groups_to_create:
+          - name: k8s-admins
+            gid: 11000
+          - name: developers
+            gid: 21000
+
+        users_deleted:
+          - username: rke
+            uid: 1005
+            home: /home/rke/
+            remove: true
+            force: true
+
+        groups_deleted:
+          - name: developers
+            gid: 21000
+EOF
 ```
-ansible all -i localhost, -m debug -a "msg={{ 'password' | password_hash('sha512', 'mysecretsalt') }}"
-```
+</details>
 
-
-Example vars Removing users
----------------------------
+<details><summary>EXAMPLE PLAYBOOK - BINARIES FROM VARS FILE</summary>
 
 You can optionally choose to remove the user's home directory and mail spool with
-the `remove` parameter, and force removal of files with the `force` parameter.
+the `remove` parameter, and force removal of files or directories with the `force` parameter.
+----------------
 
-    users_deleted:
-      - username: vagrant
-        uid: 1003
-        remove: yes
-        force: yes
+```yaml
+cat <<EOF > binaries.yaml
+---
+users:
+  - username: rke
+    name: rke user
+    groups: ['{{ admin_group }}', 'k8s-admins']
+    uid: 1005
+    home: /home/rke
+    profile: |
+      alias ll='ls -ahl'
+    generate_ssh_key: true
+    #ssh_key:
+    #  - "{{ lookup('file', '/home/rke/.ssh/id_rsa.pub') }}"
+    enable_ssh_tcp_forwarding: true
+  - username: test1
+    name: test1 user
+    groups: ['{{ admin_group }}', 'k8s-admins']
+    uid: 1006
+    home: /home/test1
+    profile: |
+      alias ll='ls -ahl'
+    generate_ssh_key: true
+    #ssh_key:
+    #  - "{{ lookup('file', '/home/test1/.ssh/id_rsa.pub') }}"
+    enable_ssh_tcp_forwarding: true
+  - username: test2
+    name: test2 user
+    groups: ['{{ admin_group }}', 'developers']
+    uid: 1007
+    home: /home/test2
+    profile: |
+      alias ll='ls -ahl'
+    generate_ssh_key: true
+    #ssh_key:
+    #  - "{{ lookup('file', '/home/test2/.ssh/id_rsa.pub') }}"
+    enable_ssh_tcp_forwarding: true
+
+groups_to_create:
+  - name: k8s-admins
+    gid: 11000
+  - name: developers
+    gid: 21000
+
+users_deleted: # Comment out if you don't want deletion
+  - username: rke
+    uid: 1005
+    home: /home/rke/
+    remove: true
+    force: true
+  - username: test1
+    uid: 1006
+    home: /home/test1/
+    remove: true
+    force: true
+  - username: test2
+    uid: 1007
+    home: /home/test2/
+    remove: true
+    force: true
+
+groups_deleted: # Comment out if you don't want deletion
+  - name: k8s-admins
+    gid: 11000
+  - name: developers
+    gid: 21000
+EOF
+```
+
+```yaml
+cat <<EOF > create-os-user.yaml
+---
+- hosts: "{{ target_host }}"
+  gather_facts: true
+  become: true
+  vars_files:
+    - binaries.yaml
+
+  roles:
+    - role: create-os-user
+EOF
+```
+
+</details>
+
+
+<details><summary>EXAMPLE GENERATING HASHED PASSWORD</summary>
+
+```bash
+ansible all -i localhost, -m debug -a "msg={{ 'password' | password_hash('sha512', 'mysecretsalt') }}"
+```
+</details>
+
+<details><summary>EXAMPLE EXECUTION</summary>
+
+```bash
+ansible-playbook -i inventory create-os-user.yaml -vv
+
+```
+</details>
+
+## License
+<details><summary>LICENSE</summary>
+to-do
+</details>
 
 Role history
 ----------------
 | date  | who | changelog |
 |---|---|---|
-|2020-04-20   | Patrick Hermann | intial commit for creation of users/groups w/ ansible
+|2024-04-22   | Andre Ebert | Added linting and task to prompt for user password and to delete user directories 
 |2020-10-10   | Patrick Hermann | Updated for using of ansible collections, fixed role structure, default 'admin-user group' for debian/redhat
+|2020-04-20   | Patrick Hermann | intial commit for creation of users/groups w/ ansible
 
 License
 -------
@@ -161,4 +260,5 @@ BSD
 Author Information
 ------------------
 
+Andre Ebert (andre.ebert@sva.de); 04.2024; Stuttgart-Things
 Patrick Hermann (patrick.hermann@sva.de); 04/2020; Stuttgart-Things
