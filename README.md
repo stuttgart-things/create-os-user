@@ -88,7 +88,6 @@ EOF
 </details>
 
 <details><summary>EXAMPLE PLAYBOOK - BINARIES INLINE</summary>
-----------------
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
@@ -136,7 +135,6 @@ EOF
 
 You can optionally choose to remove the user's home directory and mail spool with
 the `remove` parameter, and force removal of files or directories with the `force` parameter.
-----------------
 
 ```yaml
 cat <<EOF > binaries.yaml
