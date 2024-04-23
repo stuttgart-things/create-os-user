@@ -85,5 +85,6 @@
     line: "AllowTcpForwarding yes"
     regexp: '^#AllowTcpForwarding yes$'
     create: true
+    mode: 0600
   when: item.enable_ssh_tcp_forwarding is defined and item.enable_ssh_tcp_forwarding
   with_items: "{{ users }}"
