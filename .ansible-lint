@@ -57,6 +57,7 @@ skip_list:
   - yaml[line-length] # Rule for checking if the line is longer than 110 characters
   - key-order[task] # Rule for checking your Task order to: name, when, block
   - meta-incorrect # Rule for checking if meta config doesn't have default values
+  - no-log-password # Rule for not logging outputs because of passwords
 
 # Ansible-lint does not automatically load rules that have the 'opt-in' tag.
 # You must enable opt-in rules by listing each rule 'id' below.
