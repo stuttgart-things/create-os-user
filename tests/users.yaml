@@ -33,7 +33,7 @@ users:
     generate_ssh_key: true
     #ssh_key:
       #- "{{ lookup('file', '/home/rke/.ssh/id_rsa.pub') }}"
-      #- "ssh-gf693784 AAAAC3NzaC1lZDI1NTE5AAAAICJdnlJjzMmdhaDiY3cROumJvVddxh+LRSverZQcEITd martiiin" 
+      #- "ssh-gf693784 AAAAC3NzaC1lZDI1NTE5AAAAICJdnlJjzMmdhaDiY3cROumJvVddxh+LRSverZQcEITd martiiin"
     enable_ssh_tcp_forwarding: true
 
 groups_to_create:
