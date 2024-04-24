@@ -36,7 +36,8 @@ DEFAULTS
   specified for the user.
 * `users_create_homedirs` (default: true) - create home directories for new
   users. Set this to false if you manage home directories separately.
-
+* `deletion_user_group` (default: false) - delete group(s) and user(s). Set this to true to only
+  run delete tasks.
 ### USER VARIABLES
 ------------
 
@@ -102,14 +103,15 @@ cat <<EOF > create-os-user.yaml
         users:
           - username: rke
             name: rke user
-            groups: ['{{ admin_group }}','k8s-admins']
+            groups: ['{{ admin_group }}', 'k8s-admins']
             uid: 1005
             home: /home/rke
             profile: |
               alias ll='ls -ahl'
-            ssh_key:
-              - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-            enable_ssh_tcp_forwarding: True
+            generate_ssh_key: true
+            #ssh_key:
+            #  - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+            enable_ssh_tcp_forwarding: true
 
         groups_to_create:
           - name: k8s-admins
@@ -137,7 +139,7 @@ You can optionally choose to remove the user's home directory and mail spool wit
 the `remove` parameter, and force removal of files or directories with the `force` parameter.
 
 ```yaml
-cat <<EOF > binaries.yaml
+cat <<EOF > users.yaml
 ---
 users:
   - username: rke
@@ -180,7 +182,7 @@ groups_to_create:
   - name: developers
     gid: 21000
 
-users_deleted: # Comment out if you don't want deletion
+users_deleted:
   - username: rke
     uid: 1005
     home: /home/rke/
@@ -197,7 +199,7 @@ users_deleted: # Comment out if you don't want deletion
     remove: true
     force: true
 
-groups_deleted: # Comment out if you don't want deletion
+groups_deleted:
   - name: k8s-admins
     gid: 11000
   - name: developers
@@ -218,9 +220,48 @@ cat <<EOF > create-os-user.yaml
     - role: create-os-user
 EOF
 ```
-
 </details>
 
+<details><summary>EXAMPLE PLAYBOOK TO USE WITH STORED SSH-KEY IN AUTHORIZED_KEYS-FILE</summary>
+
+```yaml
+cat <<EOF > users.yaml
+---
+users:
+  - username: rke
+    name: rke user
+    groups: ['{{ admin_group }}', 'k8s-admins']
+    uid: 1005
+    home: /home/rke
+    profile: |
+      alias ll='ls -ahl'
+    generate_ssh_key: false # Default is true
+    ssh_key: # Commented in
+      - "{{ lookup('file', '/home/rke/.ssh/id_rsa.pub') }}"
+    enable_ssh_tcp_forwarding: true
+
+groups_to_create:
+  - name: k8s-admins
+    gid: 11000
+  - name: developers
+    gid: 21000
+EOF
+```
+
+```yaml
+cat <<EOF > create-os-user.yaml
+---
+- hosts: "{{ target_host }}"
+  gather_facts: true
+  become: true
+  vars_files:
+    - binaries.yaml
+
+  roles:
+    - role: create-os-user
+EOF
+```
+</details>
 
 <details><summary>EXAMPLE GENERATING HASHED PASSWORD</summary>
 
@@ -232,14 +273,52 @@ ansible all -i localhost, -m debug -a "msg={{ 'password' | password_hash('sha512
 <details><summary>EXAMPLE EXECUTION</summary>
 
 ```bash
+### Command to create group(s) and user(s)
 ansible-playbook -i inventory create-os-user.yaml -vv
 
+### Command to delete group(s) and user(s)
+ansible-playbook -i inventory create-os-user.yaml -vv --extra-vars "deletion_user_group=true"
+
 ```
+<details><summary>Needed Configuration to delete</summary>
+
+```yaml
+cat <<EOF > users.yaml
+---
+users_deleted:
+  - username: rke
+    uid: 1005
+    home: /home/rke/
+    remove: true
+    force: true
+
+groups_deleted:
+  - name: k8s-admins
+    gid: 11000
+  - name: developers
+    gid: 21000
+EOF
+```
+</details>
+
 </details>
 
 ## License
 <details><summary>LICENSE</summary>
-to-do
+
+Copyright 2020 patrick hermann.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 </details>
 
 Role history
@@ -258,6 +337,6 @@ BSD
 Author Information
 ------------------
 
-Andre Ebert (andre.ebert@sva.de); 04.2024; Stuttgart-Things
+Andre Ebert (andre.ebert@sva.de); 04/2024; Stuttgart-Things
 
 Patrick Hermann (patrick.hermann@sva.de); 04/2020; Stuttgart-Things
