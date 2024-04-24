@@ -3,7 +3,7 @@ users_create_per_user_group: true # Create a group for every user and make that 
 users_group: users
 users_default_shell: /bin/bash # # The default shell for a user if none is specified
 users_create_homedirs: true # Create home dirs for new users? Set this to false if you manage home directories in some other way.
-
+deletion_user_group: false
 
 # Lists of users to create and delete
 users: []
@@ -19,6 +19,7 @@ groups_to_create: []
 #   groups_to_create:
 #     - name: developers
 #       gid: 21000
+
 groups_deleted: []
 # List of groups to delete
 # Example:
