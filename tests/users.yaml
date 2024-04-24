@@ -1,0 +1,66 @@
+---
+users:
+  - username: rke
+    name: rke user
+    groups: ['{{ admin_group }}', 'k8s-admins']
+    uid: 1005
+    home: /home/rke
+    profile: |
+      alias ll='ls -ahl'
+    generate_ssh_key: true
+    #ssh_key:
+    #  - "{{ lookup('file', '/home/rke/.ssh/id_rsa.pub') }}"
+    enable_ssh_tcp_forwarding: true
+  - username: test1
+    name: test1 user
+    groups: ['{{ admin_group }}', 'k8s-admins']
+    uid: 1006
+    home: /home/test1
+    profile: |
+      alias ll='ls -ahl'
+    generate_ssh_key: true
+    #ssh_key:
+    #  - "{{ lookup('file', '/home/test1/.ssh/id_rsa.pub') }}"
+    enable_ssh_tcp_forwarding: true
+    password: "$6$mysecretsalt$MIJffjeQyfrKKrGkprGrDL/g2mCJa53koLmYQuuLmY9y37pDvGKPXU1Ov3RbMi.tpQ9cWvxAzUVtBLe7KrZoU."
+  - username: test2
+    name: test2 user
+    groups: ['{{ admin_group }}', 'developers']
+    uid: 1007
+    home: /home/test2
+    profile: |
+      alias ll='ls -ahl'
+    generate_ssh_key: true
+    #ssh_key:
+      #- "{{ lookup('file', '/home/rke/.ssh/id_rsa.pub') }}"
+      #- "ssh-gf693784 AAAAC3NzaC1lZDI1NTE5AAAAICJdnlJjzMmdhaDiY3cROumJvVddxh+LRSverZQcEITd martiiin" 
+    enable_ssh_tcp_forwarding: true
+
+groups_to_create:
+  - name: k8s-admins
+    gid: 11000
+  - name: developers
+    gid: 21000
+
+users_deleted:
+  - username: rke
+    uid: 1005
+    home: /home/rke/
+    remove: true
+    force: true
+  - username: test1
+    uid: 1006
+    home: /home/test1/
+    remove: true
+    force: true
+  - username: test2
+    uid: 1007
+    home: /home/test2/
+    remove: true
+    force: true
+
+groups_deleted:
+  - name: k8s-admins
+    gid: 11000
+  - name: developers
+    gid: 21000
