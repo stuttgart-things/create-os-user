@@ -3,7 +3,7 @@
   gather_facts: true
   become: true
   vars_files:
-    - binaries.yaml
+    - users.yaml
 
   roles:
     - role: create-os-user
