@@ -1,9 +1,16 @@
 ---
 - name: Create group(s)
   ansible.builtin.include_tasks: create-groups.yaml
+  when: (not deletion_user_group|bool) or (deletion_user_group is not defined)
 
 - name: Create admin group(s)
   ansible.builtin.include_tasks: create-admin-group.yaml
+  when: (not deletion_user_group|bool) or (deletion_user_group is not defined)
 
 - name: Create user(s)
   ansible.builtin.include_tasks: create-users.yaml
+  when: (not deletion_user_group|bool) or (deletion_user_group is not defined)
+
+- name: Delete group(s) and user(s)
+  ansible.builtin.include_tasks: delete-groups-user.yaml
+  when: deletion_user_group|bool
