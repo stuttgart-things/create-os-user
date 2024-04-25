@@ -1,0 +1,9 @@
+---
+- hosts: all # "{{ target_host }}"
+  gather_facts: true
+  become: true
+  vars_files:
+    - users.yaml
+
+  roles:
+    - role: create-os-user

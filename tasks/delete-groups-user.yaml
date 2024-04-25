@@ -1,0 +1,25 @@
+---
+- name: Deleted user removal
+  ansible.builtin.user:
+    name: "{{ item.username }}"
+    state: absent
+    remove: "{{ item.remove | default(omit) }}"
+    force: "{{ item.force | default(omit) }}"
+  with_items: "{{ users_deleted }}"
+  tags: ["users", "configuration"]
+
+- name: Deleted per-user group removal
+  ansible.builtin.group:
+    name: "{{ item.username }}"
+    state: absent
+  with_items: "{{ users_deleted }}"
+  when: users_create_per_user_group
+  tags: ["users", "configuration"]
+
+- name: Delete group removal
+  ansible.builtin.group:
+    name: "{{ item.name }}"
+    state: absent
+    force: "{{ item.force | default(omit) }}"
+  with_items: "{{ groups_deleted }}"
+  tags: ["groups", "configuration"]

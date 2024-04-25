@@ -25,6 +25,7 @@
     line: '{{ item.username }} ALL=NOPASSWD: ALL'
     create: true
     validate: '/usr/sbin/visudo -cf %s'
+    mode: 0440
   with_items: "{{ users }}"
   when: ansible_os_family == 'Debian' and '"sudo" in users.groups'
 
