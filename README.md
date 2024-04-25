@@ -3,43 +3,7 @@ stuttgart-things/create-os-user
 
 manage users and groups on linux systems.
 
-<details><summary>ROLE INSTALLATION</summary>
-
-installs role and all of it's dependencies w/:
-
-```bash
-cat <<EOF > /tmp/requirements.yaml
-roles:
-- src: https://github.com/stuttgart-things/create-os-user.git
-  scm: git
-collections:
-- name: ansible.posix
-EOF
-
-ansible-galaxy install -r /tmp/requirements.yaml --force
-ansible-galaxy collection install -r /tmp/requirements.yaml --force
-rm -rf /tmp/requirements.yaml
-```
-</details>
-
-<details><summary>ROLE VARIABLES</summary>
-
-DEFAULTS
-------------
-
-* `users_create_per_user_group` (default: true) - when creating users, also
-  create a group with the same username and make that the user's primary
-  group.
-* `users_group` (default: users) - if users_create_per_user_group is _not_ set,
-  then this is the primary group for all created users.
-* `users_default_shell` (default: /bin/bash) - the default shell if none is
-  specified for the user.
-* `users_create_homedirs` (default: true) - create home directories for new
-  users. Set this to false if you manage home directories separately.
-* `deletion_user_group` (default: false) - delete group(s) and user(s). Set this to true to only
-  run delete tasks.
-### USER VARIABLES
-------------
+<details><summary>VARIABLES</summary>
 
 Add a users variable containing the list of users to add. A good place to put
 this is in `group_vars/all` or `group_vars/groupname` if you only want the
@@ -77,6 +41,42 @@ In addition, the following items are optional for each user:
 
 </details>
 
+<details><summary>DEFAULTS</summary>
+
+* `users_create_per_user_group` (default: true) - when creating users, also
+  create a group with the same username and make that the user's primary
+  group.
+* `users_group` (default: users) - if users_create_per_user_group is _not_ set,
+  then this is the primary group for all created users.
+* `users_default_shell` (default: /bin/bash) - the default shell if none is
+  specified for the user.
+* `users_create_homedirs` (default: true) - create home directories for new
+  users. Set this to false if you manage home directories separately.
+* `deletion_user_group` (default: false) - delete group(s) and user(s). Set this to true to only
+  run delete tasks.
+
+</details>
+
+<details><summary>ROLE INSTALLATION</summary>
+
+installs role and all of it's dependencies w/:
+
+```bash
+cat <<EOF > /tmp/requirements.yaml
+roles:
+- src: https://github.com/stuttgart-things/create-os-user.git
+  scm: git
+collections:
+- name: ansible.posix
+EOF
+
+ansible-galaxy install -r /tmp/requirements.yaml --force
+ansible-galaxy collection install -r /tmp/requirements.yaml --force
+rm -rf /tmp/requirements.yaml
+```
+
+</details>
+
 <details><summary>EXAMPLE INVENTORY</summary>
 
 ```bash
@@ -88,7 +88,7 @@ EOF
 
 </details>
 
-<details><summary>EXAMPLE PLAYBOOK - BINARIES INLINE</summary>
+<details><summary>EXAMPLE PLAYBOOK - USERS DEFINITION INLINE</summary>
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
@@ -131,12 +131,12 @@ cat <<EOF > create-os-user.yaml
             gid: 21000
 EOF
 ```
+
 </details>
 
-<details><summary>EXAMPLE PLAYBOOK - BINARIES FROM VARS FILE</summary>
+<details><summary>EXAMPLE PLAYBOOK - USERS DEFINITION VIA VARS FILE</summary>
 
 You can optionally choose to remove the user's home directory and mail spool with
-the `remove` parameter, and force removal of files or directories with the `force` parameter.
 
 ```yaml
 cat <<EOF > users.yaml
@@ -214,15 +214,16 @@ cat <<EOF > create-os-user.yaml
   gather_facts: true
   become: true
   vars_files:
-    - binaries.yaml
+    - users.yaml
 
   roles:
     - role: create-os-user
 EOF
 ```
+
 </details>
 
-<details><summary>EXAMPLE PLAYBOOK TO USE WITH STORED SSH-KEY IN AUTHORIZED_KEYS-FILE</summary>
+<details><summary>EXAMPLE PLAYBOOK - COPY PUBLIC (SSH-)KEY TO AUTHORIZED_KEYS FILE</summary>
 
 ```yaml
 cat <<EOF > users.yaml
@@ -255,32 +256,16 @@ cat <<EOF > create-os-user.yaml
   gather_facts: true
   become: true
   vars_files:
-    - binaries.yaml
+    - users.yaml
 
   roles:
     - role: create-os-user
 EOF
 ```
+
 </details>
 
-<details><summary>EXAMPLE GENERATING HASHED PASSWORD</summary>
-
-```bash
-ansible all -i localhost, -m debug -a "msg={{ 'password' | password_hash('sha512', 'mysecretsalt') }}"
-```
-</details>
-
-<details><summary>EXAMPLE EXECUTION</summary>
-
-```bash
-### Command to create group(s) and user(s)
-ansible-playbook -i inventory create-os-user.yaml -vv
-
-### Command to delete group(s) and user(s)
-ansible-playbook -i inventory create-os-user.yaml -vv --extra-vars "deletion_user_group=true"
-
-```
-<details><summary>Needed Configuration to delete</summary>
+<details><summary>EXAMPLE CONFIG - REMOVE USERS</summary>
 
 ```yaml
 cat <<EOF > users.yaml
@@ -299,7 +284,25 @@ groups_deleted:
     gid: 21000
 EOF
 ```
+
 </details>
+
+<details><summary>EXAMPLE GENERATING HASHED PASSWORD</summary>
+
+```bash
+ansible all -i localhost, -m debug -a "msg={{ 'password' | password_hash('sha512', 'mysecretsalt') }}"
+```
+</details>
+
+<details><summary>EXAMPLE EXECUTION</summary>
+
+```bash
+# Command to create group(s) and user(s)
+ansible-playbook -i inventory create-os-user.yaml -vv
+
+# Command to delete group(s) and user(s)
+ansible-playbook -i inventory create-os-user.yaml -vv --extra-vars "deletion_user_group=true"
+```
 
 </details>
 
@@ -329,14 +332,10 @@ Role history
 |2020-10-10   | Patrick Hermann | Updated for using of ansible collections, fixed role structure, default 'admin-user group' for debian/redhat
 |2020-04-20   | Patrick Hermann | intial commit for creation of users/groups w/ ansible
 
-License
--------
-
-BSD
-
 Author Information
 ------------------
 
-Andre Ebert (andre.ebert@sva.de); 04/2024; Stuttgart-Things
-
-Patrick Hermann (patrick.hermann@sva.de); 04/2020; Stuttgart-Things
+```yaml
+Andre Ebert, 04/2024, andre.ebert@sva.de, Stuttgart-Things
+Patrick Hermann, 03/2020, patrick.hermann@sva.de, Stuttgart-Things
+```
