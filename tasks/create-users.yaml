@@ -31,11 +31,13 @@
 - name: Setup user profiles
   ansible.builtin.blockinfile:
     block: "{{ item.profile }}"
-    dest: "{{ item.home | default('/home/' + item.username) }}/.profile"
+    dest: "{{ item.home | default('/home/' + item.username) }}/{{ profile_name  }}"
     owner: "{{ item.username }}"
     group: "{{ item.group | default(item.username if users_create_per_user_group else users_group) }}"
     mode: 0644
     create: true
+    marker_begin: "<!-- BEGIN USERS SETUP -->"
+    marker_end: "<!-- BEGIN USERS SETUP -->"
   when: users_create_homedirs and item.profile is defined
   with_items: "{{ users }}"
 
