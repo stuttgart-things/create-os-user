@@ -27,7 +27,7 @@
     validate: '/usr/sbin/visudo -cf %s'
     mode: 0440
   with_items: "{{ users }}"
-  when: ansible_os_family == 'Debian' and '"sudo" in users.groups'
+  when: ansible_os_family == 'Debian' and ('sudo' in item.groups)
 
 - name: Sudo without password for wheel group
   ansible.builtin.copy:
