@@ -11,7 +11,7 @@ users: []
 users_deleted: []
 
 
-admin_group: "{% if ansible_os_family == 'RedHat' or ansible_os_family == 'Suse' %}wheel{% elif ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' %}sudo{% else %}admin{% endif %}"
+admin_group: "{% if ansible_facts['os_family'] == 'RedHat' or ansible_facts['os_family'] == 'Suse' %}wheel{% elif ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu' %}sudo{% else %}admin{% endif %}"
 update_packages: false
 
 groups_to_create: []

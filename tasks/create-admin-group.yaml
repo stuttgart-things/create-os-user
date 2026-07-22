@@ -7,7 +7,7 @@
     line: '%admin ALL=(ALL) NOPASSWD: ALL'
     validate: '/usr/sbin/visudo -cf %s'
   tags: ["users", "groups", "configuration"]
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
 
 - name: Allow sudo group sudo without password
   ansible.builtin.lineinfile:
@@ -17,7 +17,7 @@
     line: '%sudo   ALL=(ALL:ALL) NOPASSWD: ALL'
     validate: '/usr/sbin/visudo -cf %s'
   tags: ["users", "groups", "configuration"]
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
 
 - name: Allow user sudo without password
   ansible.builtin.lineinfile:
@@ -27,11 +27,11 @@
     validate: '/usr/sbin/visudo -cf %s'
     mode: 0440
   with_items: "{{ users }}"
-  when: ansible_os_family == 'Debian' and ('sudo' in item.groups)
+  when: ansible_facts['os_family'] == 'Debian' and ('sudo' in item.groups)
 
 - name: Sudo without password for wheel group
   ansible.builtin.copy:
     content: '%wheel ALL=(ALL:ALL) NOPASSWD:ALL'
     dest: /etc/sudoers.d/wheel_nopasswd
     mode: 0440
-  when: ansible_os_family == 'RedHat'
+  when: ansible_facts['os_family'] == 'RedHat'
